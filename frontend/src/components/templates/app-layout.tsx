@@ -166,24 +166,23 @@ function AppLayout() {
             sidebarCollapsed ? 'justify-center px-3' : 'px-6',
           )}
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-            <Scale className="h-5 w-5 text-white" />
-          </div>
-          <span
-            className={cn(
-              'text-xl font-bold tracking-tight text-text',
-              sidebarCollapsed && 'hidden',
-            )}
-          >
-            Zena
-          </span>
+          {!sidebarCollapsed && (
+            <>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
+                <Scale className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-xl font-bold tracking-tight text-text">
+                Zena
+              </span>
+            </>
+          )}
           <Button
             type="button"
             variant="ghost"
             size="sm"
             className={cn(
-              'ml-auto hidden md:inline-flex',
-              sidebarCollapsed && 'ml-0',
+              'hidden md:inline-flex',
+              sidebarCollapsed ? 'mx-auto' : 'ml-auto',
             )}
             onClick={() => setSidebarCollapsed((v) => !v)}
             aria-label="Comprimir sidebar"
