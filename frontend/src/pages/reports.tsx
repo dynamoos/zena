@@ -31,7 +31,7 @@ function ReportsPage() {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
     null,
   );
-  const [pendingName, setPendingName] = useState('Nueva plantilla');
+  const [pendingName, _setPendingName] = useState('Nueva plantilla');
   const [templatesPage, setTemplatesPage] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<ReportTemplate | null>(null);
   const [pdfTarget, setPdfTarget] = useState<ReportTemplate | null>(null);
