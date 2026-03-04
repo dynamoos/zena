@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+
+# Env
+.env
+.env.local
+
+# Logs
+logs/
+*.log
+
+# Root residuals
+node_modules/
+bun.lock
