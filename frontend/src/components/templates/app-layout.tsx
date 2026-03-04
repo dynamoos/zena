@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate } from '@tanstack/react-router';
 import {
   Briefcase,
+  ChevronDown,
   FileText,
   FileType2,
   LayoutDashboard,
@@ -17,7 +18,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { Button } from '@/components/atoms/button';
 import { cn } from '@/lib/cn';
 import { useAuthStore } from '@/stores/auth-store';
@@ -28,6 +29,55 @@ const NAV_ITEMS = [
   { to: '/persons' as const, label: 'Personas', icon: Users },
   { to: '/locations' as const, label: 'Ubicaciones', icon: MapPin },
 ];
+
+function NavGroup({
+  icon: Icon,
+  label,
+  collapsed,
+  children,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  collapsed: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-text-muted transition-all duration-200 hover:bg-surface-secondary hover:text-text',
+          collapsed && 'justify-center gap-0',
+        )}
+      >
+        <Icon className="h-5 w-5 shrink-0" />
+        <span className={cn('flex-1 text-left', collapsed && 'hidden')}>
+          {label}
+        </span>
+        <ChevronDown
+          className={cn(
+            'h-3.5 w-3.5 shrink-0 transition-transform',
+            open && 'rotate-180',
+            collapsed && 'hidden',
+          )}
+        />
+      </button>
+      {(open || collapsed) && (
+        <ul
+          className={cn(
+            'flex flex-col gap-0.5 overflow-hidden transition-all',
+            collapsed && !open && 'hidden',
+          )}
+        >
+          {children}
+        </ul>
+      )}
+    </li>
+  );
+}
 
 function AppLayout() {
   const logout = useAuthStore((s) => s.logout);
@@ -146,7 +196,7 @@ function AppLayout() {
           </Button>
         </div>
 
-        <nav className="flex-1 px-3 py-2">
+        <nav className="flex-1 overflow-y-auto px-3 py-2">
           <ul className="flex flex-col gap-0.5">
             {navItems.map((item) => (
               <li key={item.to}>
@@ -171,83 +221,83 @@ function AppLayout() {
                 </Link>
               </li>
             ))}
-            <li>
-              <div
-                className={cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-text-muted',
-                  sidebarCollapsed && 'justify-center gap-0',
-                )}
-              >
-                <FileText className="h-5 w-5" />
-                <span className={cn(sidebarCollapsed && 'hidden')}>
-                  Reportes
-                </span>
-              </div>
-            </li>
-            <li>
-              <Link
-                to="/reports/builder"
-                onClick={closeSidebar}
-                className={cn(
-                  'ml-8 flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-200',
-                  sidebarCollapsed && 'hidden',
-                  'text-text-muted hover:bg-surface-secondary hover:text-text',
-                )}
-                activeProps={{
-                  className: 'bg-primary/5 text-primary hover:bg-primary/10',
-                }}
-              >
-                <PlusSquare className="h-4 w-4" />
-                Builder Document
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/reports/templates"
-                onClick={closeSidebar}
-                className={cn(
-                  'ml-8 flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-200',
-                  sidebarCollapsed && 'hidden',
-                  'text-text-muted hover:bg-surface-secondary hover:text-text',
-                )}
-                activeProps={{
-                  className: 'bg-primary/5 text-primary hover:bg-primary/10',
-                }}
-              >
-                <FileType2 className="h-4 w-4" />
-                Plantillas
-              </Link>
-            </li>
-            <li>
-              <div
-                className={cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-text-muted',
-                  sidebarCollapsed && 'justify-center gap-0',
-                )}
-              >
-                <SlidersHorizontal className="h-5 w-5" />
-                <span className={cn(sidebarCollapsed && 'hidden')}>
-                  Configuración
-                </span>
-              </div>
-            </li>
-            <li>
-              <Link
-                to="/settings/process-statuses"
-                onClick={closeSidebar}
-                className={cn(
-                  'ml-8 flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-200',
-                  sidebarCollapsed && 'hidden',
-                  'text-text-muted hover:bg-surface-secondary hover:text-text',
-                )}
-                activeProps={{
-                  className: 'bg-primary/5 text-primary hover:bg-primary/10',
-                }}
-              >
-                <Settings2 className="h-4 w-4" />
-                Estados de proceso
-              </Link>
-            </li>
+
+            <NavGroup
+              icon={FileText}
+              label="Reportes"
+              collapsed={sidebarCollapsed}
+            >
+              <li>
+                <Link
+                  to="/reports/builder"
+                  onClick={closeSidebar}
+                  className={cn(
+                    'flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-200',
+                    sidebarCollapsed
+                      ? 'justify-center'
+                      : 'ml-8',
+                    'text-text-muted hover:bg-surface-secondary hover:text-text',
+                  )}
+                  activeProps={{
+                    className: 'bg-primary/5 text-primary hover:bg-primary/10',
+                  }}
+                >
+                  <PlusSquare className="h-4 w-4" />
+                  <span className={cn(sidebarCollapsed && 'hidden')}>
+                    Builder Document
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/reports/templates"
+                  onClick={closeSidebar}
+                  className={cn(
+                    'flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-200',
+                    sidebarCollapsed
+                      ? 'justify-center'
+                      : 'ml-8',
+                    'text-text-muted hover:bg-surface-secondary hover:text-text',
+                  )}
+                  activeProps={{
+                    className: 'bg-primary/5 text-primary hover:bg-primary/10',
+                  }}
+                >
+                  <FileType2 className="h-4 w-4" />
+                  <span className={cn(sidebarCollapsed && 'hidden')}>
+                    Plantillas
+                  </span>
+                </Link>
+              </li>
+            </NavGroup>
+
+            <NavGroup
+              icon={SlidersHorizontal}
+              label="Configuración"
+              collapsed={sidebarCollapsed}
+            >
+              <li>
+                <Link
+                  to="/settings/process-statuses"
+                  onClick={closeSidebar}
+                  className={cn(
+                    'flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-200',
+                    sidebarCollapsed
+                      ? 'justify-center'
+                      : 'ml-8',
+                    'text-text-muted hover:bg-surface-secondary hover:text-text',
+                  )}
+                  activeProps={{
+                    className: 'bg-primary/5 text-primary hover:bg-primary/10',
+                  }}
+                >
+                  <Settings2 className="h-4 w-4" />
+                  <span className={cn(sidebarCollapsed && 'hidden')}>
+                    Estados de proceso
+                  </span>
+                </Link>
+              </li>
+            </NavGroup>
           </ul>
         </nav>
 
