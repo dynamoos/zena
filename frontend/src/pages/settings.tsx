@@ -21,7 +21,7 @@ const STAGE_OPTIONS = [
 ];
 
 function SettingsPage() {
-  const { canEdit } = usePermissions();
+  const { isAdmin, canEdit } = usePermissions();
   const queryClient = useQueryClient();
 
   const [stageType, setStageType] = useState<StageType>(
@@ -133,8 +133,8 @@ function SettingsPage() {
             Gestión de estados configurables por etapa legal del caso
           </p>
         </div>
-        <Badge variant={canEdit ? 'primary' : 'warning'}>
-          {canEdit ? 'Modo Admin' : 'Solo lectura'}
+        <Badge variant={isAdmin ? 'primary' : canEdit ? 'success' : 'warning'}>
+          {isAdmin ? 'Administrador' : canEdit ? 'Editor' : 'Solo lectura'}
         </Badge>
       </div>
 
